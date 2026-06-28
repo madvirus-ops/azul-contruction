@@ -1,0 +1,45 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Services{% endblock %}
+{% block header_title %}Services{% endblock %}
+{% block breadcrumb %}<a href="{% url 'dashboard_home' %}">Dashboard</a> <span>/</span> Services{% endblock %}
+
+{% block dashboard_content %}
+<div class="table-wrapper">
+    <div class="table-toolbar">
+        <span class="table-toolbar__title">{{ services.count }} service{{ services.count|pluralize }}</span>
+        <a href="{% url 'dashboard_service_create' %}" class="btn btn--primary btn--sm">
+            <i class="fa-solid fa-plus"></i> Add Service
+        </a>
+    </div>
+    {% if services %}
+    <table>
+        <thead>
+            <tr>
+                <th>Order</th>
+                <th>Name</th>
+                <th>Icon</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for service in services %}
+            <tr>
+                <td>{{ service.order }}</td>
+                <td style="font-weight: 600;">{{ service.name }}</td>
+                <td><i class="{{ service.icon }}"></i> {{ service.icon }}</td>
+                <td>
+                    <div class="table-actions">
+                        <a href="{% url 'dashboard_service_edit' service.pk %}" class="edit"><i class="fa-solid fa-pen"></i></a>
+                        <a href="{% url 'dashboard_service_delete' service.pk %}" class="delete" onclick="return confirm('Delete this service?')"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty"><i class="fa-solid fa-folder-open"></i><p>No services yet.</p></div>
+    {% endif %}
+</div>
+{% endblock %}

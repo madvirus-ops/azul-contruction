@@ -1,0 +1,76 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Gallery{% endblock %}
+{% block header_title %}Gallery{% endblock %}
+{% block breadcrumb %}<a href="{% url 'dashboard_home' %}">Dashboard</a> <span>/</span> Gallery{% endblock %}
+
+{% block dashboard_content %}
+<div class="form-card" style="margin-bottom: 24px;">
+    <div class="form-card__header">
+        <h2 class="form-card__title">Bulk Upload Images</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Select multiple images at once to upload them in bulk</p>
+    </div>
+    <form method="post" enctype="multipart/form-data" action="{% url 'dashboard_gallery_bulk' %}">
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="form-group form-group--full">
+                <label>Select Images</label>
+                <input type="file" name="images" multiple accept="image/*" required
+                    style="padding: 14px 16px; background: var(--bg-input); border: 2px dashed var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: var(--font); font-size: 0.9rem; cursor: pointer; width: 100%;">
+                <span class="help-text">You can select multiple images at once (Ctrl/Cmd + click)</span>
+            </div>
+            <div class="form-group">
+                <label>Caption (applied to all)</label>
+                <input type="text" name="caption" placeholder="Optional shared caption">
+            </div>
+            <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px; padding-top: 20px;">
+                <input type="checkbox" name="featured" id="bulk-featured" style="width: auto; accent-color: var(--accent);">
+                <label for="bulk-featured" style="margin: 0; cursor: pointer;">Mark as featured</label>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn--primary"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Images</button>
+        </div>
+    </form>
+</div>
+
+<div class="table-wrapper">
+    <div class="table-toolbar">
+        <span class="table-toolbar__title">{{ images.count }} image{{ images.count|pluralize }}</span>
+        <a href="{% url 'dashboard_gallery_create' %}" class="btn btn--primary btn--sm">
+            <i class="fa-solid fa-plus"></i> Add Single
+        </a>
+    </div>
+    {% if images %}
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Caption</th>
+                <th>Order</th>
+                <th>Featured</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for img in images %}
+            <tr>
+                <td><img src="{{ img.image.url }}" alt="" class="table-img"></td>
+                <td>{{ img.caption|default:'-' }}</td>
+                <td>{{ img.order }}</td>
+                <td>{% if img.featured %}<span class="badge badge--success">Yes</span>{% else %}<span class="badge badge--muted">No</span>{% endif %}</td>
+                <td>
+                    <div class="table-actions">
+                        <a href="{% url 'dashboard_gallery_edit' img.pk %}" class="edit"><i class="fa-solid fa-pen"></i></a>
+                        <a href="{% url 'dashboard_gallery_delete' img.pk %}" class="delete" onclick="return confirm('Delete this image?')"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty"><i class="fa-solid fa-images"></i><p>No gallery images yet. Upload some above.</p></div>
+    {% endif %}
+</div>
+{% endblock %}

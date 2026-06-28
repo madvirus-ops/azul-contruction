@@ -1,0 +1,92 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Gallery - Azul Environmental Engineering Services{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero--gallery">
+    <div class="container">
+        <h1 class="page-hero__title">Gallery</h1>
+        <p class="page-hero__sub">Explore our projects, sites, and achievements</p>
+    </div>
+</section>
+
+<section class="section gallery-page">
+    <div class="container">
+        {% if gallery_images %}
+        <div class="masonry">
+            {% for img in gallery_images %}
+            <div class="masonry__item" data-animate>
+                <div class="masonry__card" onclick="openLightbox('{{ img.image.url }}', '{{ img.caption|escapejs }}')">
+                    <img src="{{ img.image.url }}" alt="{{ img.caption }}" loading="lazy">
+                    <div class="masonry__overlay">
+                        <div class="masonry__overlay-inner">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i>
+                            {% if img.caption %}<span>{{ img.caption }}</span>{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fa-solid fa-images"></i>
+            <p>Gallery images coming soon. Our team is working on showcasing our best work.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<div class="lightbox" id="lightbox">
+    <button class="lightbox__close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
+    <button class="lightbox__prev" onclick="navLightbox(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="lightbox__next" onclick="navLightbox(1)"><i class="fa-solid fa-chevron-right"></i></button>
+    <div class="lightbox__content">
+        <img src="" alt="" id="lightbox-img">
+        <p class="lightbox__caption" id="lightbox-caption"></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const galleryImages = [
+    {% for img in gallery_images %}
+    { url: '{{ img.image.url }}', caption: '{{ img.caption|escapejs }}' },
+    {% endfor %}
+];
+let currentLightboxIndex = -1;
+
+function openLightbox(url, caption) {
+    currentLightboxIndex = galleryImages.findIndex(img => img.url === url);
+    document.getElementById('lightbox-img').src = url;
+    document.getElementById('lightbox-caption').textContent = caption || '';
+    document.getElementById('lightbox').classList.add('lightbox--active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('lightbox--active');
+    document.body.style.overflow = '';
+    currentLightboxIndex = -1;
+}
+
+function navLightbox(dir) {
+    if (galleryImages.length === 0) return;
+    currentLightboxIndex = (currentLightboxIndex + dir + galleryImages.length) % galleryImages.length;
+    const img = galleryImages[currentLightboxIndex];
+    document.getElementById('lightbox-img').src = img.url;
+    document.getElementById('lightbox-caption').textContent = img.caption || '';
+}
+
+document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) closeLightbox();
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') navLightbox(-1);
+    if (e.key === 'ArrowRight') navLightbox(1);
+});
+</script>
+{% endblock %}

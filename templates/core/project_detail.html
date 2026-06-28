@@ -1,0 +1,72 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ project.title }} - Azul Environmental Engineering Services{% endblock %}
+
+{% block content %}
+<section class="project-detail">
+    {% if project.featured_image %}
+    <div class="project-detail__hero">
+        <img src="{{ project.featured_image.url }}" alt="{{ project.title }}">
+    </div>
+    {% endif %}
+
+    <div class="container project-detail__content">
+        <div class="project-detail__sidebar">
+            <h1 class="project-detail__title">{{ project.title }}</h1>
+            <div class="project-detail__meta">
+                {% if project.client %}
+                <div class="project-meta">
+                    <span class="project-meta__label">Client</span>
+                    <span class="project-meta__value">{{ project.client }}</span>
+                </div>
+                {% endif %}
+                {% if project.location %}
+                <div class="project-meta">
+                    <span class="project-meta__label">Location</span>
+                    <span class="project-meta__value">{{ project.location }}</span>
+                </div>
+                {% endif %}
+                <div class="project-meta">
+                    <span class="project-meta__label">Status</span>
+                    <span class="project-meta__value project-card__status--{{ project.status }}">{{ project.get_status_display }}</span>
+                </div>
+                {% if project.completion_year %}
+                <div class="project-meta">
+                    <span class="project-meta__label">Completion Year</span>
+                    <span class="project-meta__value">{{ project.completion_year }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% if project.services.exists %}
+            <div class="project-detail__services">
+                <h3>Services Provided</h3>
+                <ul>
+                    {% for service in project.services.all %}
+                    <li>{{ service.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="project-detail__description">
+            {{ project.description|linebreaks }}
+        </div>
+    </div>
+
+    {% if project.gallery_images.exists %}
+    <div class="project-detail__gallery">
+        <div class="container">
+            <h2>Project Gallery</h2>
+            <div class="gallery__grid">
+                {% for img in project.gallery_images.all %}
+                <div class="gallery__item">
+                    <img src="{{ img.image.url }}" alt="{{ img.caption }}" loading="lazy">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

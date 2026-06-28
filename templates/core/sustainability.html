@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Sustainability - Azul Environmental Engineering Services{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-hero__title">Sustainability</h1>
+        <p class="page-hero__sub">Our commitment to a greener future</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if entries %}
+        <div class="sustainability__grid">
+            {% for entry in entries %}
+            <div class="sustainability-card">
+                {% if entry.image %}
+                <div class="sustainability-card__image">
+                    <img src="{{ entry.image.url }}" alt="{{ entry.title }}" loading="lazy">
+                </div>
+                {% endif %}
+                <div class="sustainability-card__content">
+                    <h2>{{ entry.title }}</h2>
+                    {{ entry.content|linebreaks }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="sustainability__content">
+            <p>Sustainability is at the core of everything we do at Azul Environmental Engineering Services. We are committed to minimizing our environmental impact while delivering world-class engineering and construction projects.</p>
+            <h3>Our Approach</h3>
+            <ul>
+                <li>Reducing carbon emissions across all project phases</li>
+                <li>Implementing green building standards and practices</li>
+                <li>Prioritizing renewable and sustainable materials</li>
+                <li>Protecting biodiversity and natural ecosystems</li>
+                <li>Engaging local communities in sustainable development</li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Azul Environmental Engineering Services{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <header class="header">
+        <div class="container header__inner">
+            <a href="{% url 'home' %}" class="logo">
+                <span class="logo__text">AZUL</span>
+                <span class="logo__sub">Environmental Engineering Services</span>
+            </a>
+            <nav class="nav">
+                <button class="nav__toggle" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="nav__backdrop"></div>
+    <nav class="nav__panel">
+        <button class="nav__close" aria-label="Close menu">
+            <span></span><span></span>
+        </button>
+        <ul class="nav__panel-list">
+            <li class="nav__item nav__item--dropdown">
+                <a href="#" class="nav__link">What we do <i class="fa-solid fa-chevron-down"></i></a>
+                <ul class="nav__dropdown">
+                    <li><a href="{% url 'services' %}#environmental-engineering">Environmental Engineering</a></li>
+                    <li><a href="{% url 'services' %}#road-construction">Road Construction</a></li>
+                    <li><a href="{% url 'services' %}#building-construction">Building Construction</a></li>
+                    <li><a href="{% url 'services' %}#airport-construction">Airport Construction</a></li>
+                    <li><a href="{% url 'services' %}#water-infrastructure">Water & Infrastructure</a></li>
+                </ul>
+            </li>
+            <li class="nav__item"><a href="{% url 'projects' %}" class="nav__link">Our projects</a></li>
+            <li class="nav__item nav__item--dropdown">
+                <a href="#" class="nav__link">Who we are <i class="fa-solid fa-chevron-down"></i></a>
+                <ul class="nav__dropdown">
+                    <li><a href="{% url 'about' %}">About us</a></li>
+                </ul>
+            </li>
+            <li class="nav__item"><a href="{% url 'sustainability' %}" class="nav__link">Sustainability</a></li>
+            <li class="nav__item"><a href="{% url 'gallery' %}" class="nav__link">Gallery</a></li>
+            <li class="nav__item"><a href="{% url 'contact' %}" class="nav__link nav__link--cta">Contact us</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="flash-msg flash-msg--{{ message.tags }}">
+                <i class="fa-solid fa-circle-check"></i> {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div class="footer__col">
+                    <h3>Azul Environmental Engineering Services</h3>
+                    <p>Engineering, procurement, and construction services for complex large-scale projects.</p>
+                </div>
+                <div class="footer__col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{% url 'projects' %}">Projects</a></li>
+                        <li><a href="{% url 'services' %}">Services</a></li>
+                        <li><a href="{% url 'about' %}">About us</a></li>
+                        <li><a href="{% url 'sustainability' %}">Sustainability</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Contact</h4>
+                    {% if company %}
+                    <p><i class="fa-solid fa-phone"></i> {{ company.phone }}</p>
+                    <p><i class="fa-solid fa-envelope"></i> {{ company.email }}</p>
+                    <p><i class="fa-solid fa-location-dot"></i> {{ company.address }}</p>
+                    {% endif %}
+                </div>
+                <div class="footer__col">
+                    <h4>Connect</h4>
+                    <div class="footer__social">
+                        {% if company %}{% if company.linkedin_url %}<a href="{{ company.linkedin_url }}" target="_blank" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>{% endif %}{% endif %}
+                        {% if company %}{% if company.facebook_url %}<a href="{{ company.facebook_url }}" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>{% endif %}{% endif %}
+                        {% if company %}{% if company.instagram_url %}<a href="{{ company.instagram_url }}" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>{% endif %}{% endif %}
+                        {% if company %}{% if company.twitter_url %}<a href="{{ company.twitter_url }}" target="_blank" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>{% endif %}{% endif %}
+                        {% if company %}{% if company.youtube_url %}<a href="{{ company.youtube_url }}" target="_blank" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>{% endif %}{% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; {% now "Y" %} Azul Environmental Engineering Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            const navToggle = document.querySelector('.nav__toggle');
+            const navPanel = document.querySelector('.nav__panel');
+            const navList = document.querySelector('.nav__panel-list');
+            const backdrop = document.querySelector('.nav__backdrop');
+            const body = document.body;
+
+            function openMenu() {
+                navPanel.classList.add('nav__panel--active');
+                navToggle.classList.add('nav__toggle--active');
+                backdrop.classList.add('nav__backdrop--active');
+                body.style.overflow = 'hidden';
+            }
+
+            function closeMenu() {
+                navPanel.classList.remove('nav__panel--active');
+                navToggle.classList.remove('nav__toggle--active');
+                backdrop.classList.remove('nav__backdrop--active');
+                body.style.overflow = '';
+            }
+
+            navToggle.addEventListener('click', () => {
+                navPanel.classList.contains('nav__panel--active') ? closeMenu() : openMenu();
+            });
+
+            // Close button inside panel
+            const navClose = document.querySelector('.nav__close');
+            if (navClose) navClose.addEventListener('click', closeMenu);
+
+            backdrop.addEventListener('click', closeMenu);
+
+            // Mobile dropdown toggle
+            document.querySelectorAll('.nav__item--dropdown > .nav__link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        const parent = this.parentElement;
+                        const wasOpen = parent.classList.contains('nav__dropdown--open');
+                        document.querySelectorAll('.nav__item--dropdown.nav__dropdown--open').forEach(
+                            item => item.classList.remove('nav__dropdown--open')
+                        );
+                        if (!wasOpen) parent.classList.add('nav__dropdown--open');
+                    }
+                });
+            });
+
+            // Close menu when clicking a link
+            navList.addEventListener('click', function(e) {
+                const link = e.target.closest('a');
+                if (!link) return;
+                if (link.closest('.nav__item--dropdown > .nav__link')) return;
+                setTimeout(closeMenu, 100);
+            });
+
+            // Close on escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && navPanel.classList.contains('nav__panel--active')) {
+                    closeMenu();
+                }
+            });
+
+            // Scroll animations
+            const scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('in-view');
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+            document.querySelectorAll('[data-animate]').forEach(el => scrollObserver.observe(el));
+
+            // Header scrolled state
+            const header = document.querySelector('.header');
+            window.addEventListener('scroll', () => {
+                header.classList.toggle('scrolled', window.pageYOffset > 60);
+            });
+
+            // Auto-dismiss flash messages after 5 seconds
+            document.querySelectorAll('.flash-msg').forEach(msg => {
+                setTimeout(() => {
+                    msg.style.opacity = '0';
+                    msg.style.transform = 'translateY(-10px)';
+                    setTimeout(() => msg.remove(), 300);
+                }, 5000);
+            });
+        })();
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

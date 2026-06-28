@@ -1,0 +1,63 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Message from {{ contact_msg.name }}{% endblock %}
+{% block header_title %}Message{% endblock %}
+{% block breadcrumb %}<a href="{% url 'dashboard_home' %}">Dashboard</a> <span>/</span> <a href="{% url 'dashboard_contact_messages' %}">Messages</a> <span>/</span> {{ contact_msg.name }}{% endblock %}
+
+{% block dashboard_content %}
+<div style="display: grid; grid-template-columns: 360px 1fr; gap: 24px;">
+    <div class="form-card" style="padding: 28px;">
+        <h3 style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 20px;">Contact Details</h3>
+
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+            <div>
+                <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim);">Name</span>
+                <p style="font-size: 1.1rem; font-weight: 700; margin-top: 2px;">{{ contact_msg.name }}</p>
+            </div>
+
+            <div>
+                <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim);">Email</span>
+                <p style="font-size: 1rem; margin-top: 2px;">
+                    <a href="mailto:{{ contact_msg.email }}" style="color: var(--accent);">{{ contact_msg.email }}</a>
+                </p>
+            </div>
+
+            {% if contact_msg.phone %}
+            <div>
+                <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim);">Phone</span>
+                <p style="font-size: 1rem; margin-top: 2px;">
+                    <a href="tel:{{ contact_msg.phone }}" style="color: var(--text);">{{ contact_msg.phone }}</a>
+                </p>
+            </div>
+            {% endif %}
+
+            <div>
+                <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim);">Received</span>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 2px;">{{ contact_msg.created_at|date:"F j, Y" }} at {{ contact_msg.created_at|date:"g:i A" }}</p>
+            </div>
+
+            <div>
+                <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim);">Status</span>
+                <p style="margin-top: 4px;">{% if contact_msg.read %}<span class="badge badge--muted">Read</span>{% else %}<span class="badge badge--success">New</span>{% endif %}</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px;">
+            <a href="mailto:{{ contact_msg.email }}" class="btn btn--primary" style="width: 100%; justify-content: center;"><i class="fa-solid fa-reply"></i> Reply via Email</a>
+            {% if contact_msg.phone %}
+            <a href="tel:{{ contact_msg.phone }}" class="btn btn--secondary" style="width: 100%; justify-content: center;"><i class="fa-solid fa-phone"></i> Call</a>
+            {% endif %}
+            <a href="{% url 'dashboard_contact_message_delete' contact_msg.pk %}" class="btn btn--danger btn--sm" style="width: 100%; justify-content: center;" onclick="return confirm('Delete this message?')"><i class="fa-solid fa-trash"></i> Delete</a>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <div class="form-card__header">
+            <h2 class="form-card__title">Message</h2>
+        </div>
+        <div style="padding: 8px 0;">
+            <p style="line-height: 2; color: var(--text); white-space: pre-wrap; font-size: 0.95rem;">{{ contact_msg.message }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

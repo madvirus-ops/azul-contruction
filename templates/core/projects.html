@@ -1,0 +1,73 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Projects - Azul Environmental Engineering Services{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-hero__title">Our Projects</h1>
+        <p class="page-hero__sub">Delivering excellence across environmental engineering and construction</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="projects__grid">
+            {% for project in projects %}
+            <a href="{{ project.get_absolute_url }}" class="project-card" data-animate>
+                <div class="project-card__image">
+                    {% if project.featured_image %}
+                    <img src="{{ project.featured_image.url }}" alt="{{ project.title }}" loading="lazy">
+                    {% else %}
+                    <div class="project-card__image-bg" style="background: linear-gradient(135deg, #0f1a2e 0%, #132338 50%, #0d1a2a 100%);">
+                        <div class="project-card__image-icon">
+                            {% with title=project.title|lower %}
+                                {% if 'road' in title or 'highway' in title or 'expressway' in title %}
+                                    <i class="fa-solid fa-road"></i>
+                                {% elif 'airport' in title or 'terminal' in title %}
+                                    <i class="fa-solid fa-plane"></i>
+                                {% elif 'building' in title or 'tower' in title or 'headquarter' in title or 'center' in title or 'medical' in title or 'convention' in title %}
+                                    <i class="fa-solid fa-building"></i>
+                                {% elif 'water' in title or 'wetland' in title or 'remediation' in title or 'waste' in title or 'watershed' in title or 'environmental' in title %}
+                                    <i class="fa-solid fa-leaf"></i>
+                                {% elif 'brownfield' in title %}
+                                    <i class="fa-solid fa-recycle"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-hard-hat"></i>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="project-card__image-overlay">
+                        <span>View Project <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <div class="project-card__content">
+                    <span class="project-card__status project-card__status--{{ project.status }}">{{ project.get_status_display }}</span>
+                    <h3 class="project-card__title">{{ project.title }}</h3>
+                    <div class="project-card__meta">
+                        {% if project.client %}<span class="project-card__client">{{ project.client }}</span>{% endif %}
+                        {% if project.location %}<span class="project-card__location"><i class="fa-solid fa-location-dot"></i> {{ project.location }}</span>{% endif %}
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+            <p class="empty-state">No projects have been added yet.</p>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="pagination__link">&laquo; Previous</a>
+            {% endif %}
+            <span class="pagination__current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="pagination__link">Next &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block header_title %}Dashboard{% endblock %}
+{% block breadcrumb %}Overview{% endblock %}
+
+{% block dashboard_content %}
+<div class="stat-cards">
+    <div class="stat-card">
+        <div class="stat-card__icon"><i class="fa-solid fa-building"></i></div>
+        <div class="stat-card__value">{{ project_count }}</div>
+        <div class="stat-card__label">Total Projects</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card__icon"><i class="fa-solid fa-spinner"></i></div>
+        <div class="stat-card__value">{{ project_in_progress }}</div>
+        <div class="stat-card__label">In Progress</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card__icon"><i class="fa-solid fa-briefcase"></i></div>
+        <div class="stat-card__value">{{ service_count }}</div>
+        <div class="stat-card__label">Services</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card__icon"><i class="fa-solid fa-images"></i></div>
+        <div class="stat-card__value">{{ gallery_count }}</div>
+        <div class="stat-card__label">Gallery Images</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card__icon"><i class="fa-solid fa-chart-simple"></i></div>
+        <div class="stat-card__value">{{ stat_count }}</div>
+        <div class="stat-card__label">Stats</div>
+    </div>
+</div>
+
+<div class="table-wrapper">
+    <div class="table-toolbar">
+        <span class="table-toolbar__title">Recent Projects</span>
+        <a href="{% url 'dashboard_project_create' %}" class="btn btn--primary btn--sm">
+            <i class="fa-solid fa-plus"></i> Add Project
+        </a>
+    </div>
+    {% if recent_projects %}
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Client</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in recent_projects %}
+            <tr>
+                <td>
+                    {% if project.featured_image %}
+                    <img src="{{ project.featured_image.url }}" alt="" class="table-img">
+                    {% else %}
+                    <span style="color: var(--text-dim); font-size: 0.75rem;">No image</span>
+                    {% endif %}
+                </td>
+                <td style="font-weight: 600;">{{ project.title }}</td>
+                <td>{{ project.client|default:'-' }}</td>
+                <td>{{ project.location|default:'-' }}</td>
+                <td>
+                    <span class="badge {% if project.status == 'in_progress' %}badge--success{% elif project.status == 'completed' %}badge--muted{% else %}badge--warning{% endif %}">
+                        {{ project.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    <div class="table-actions">
+                        <a href="{% url 'dashboard_project_edit' project.pk %}" class="edit"><i class="fa-solid fa-pen"></i></a>
+                        <a href="{% url 'dashboard_project_delete' project.pk %}" class="delete" onclick="return confirm('Delete this project?')"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty">
+        <i class="fa-solid fa-folder-open"></i>
+        <p>No projects yet. <a href="{% url 'dashboard_project_create' %}" style="color: var(--accent);">Create your first project</a></p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Messages{% endblock %}
+{% block header_title %}Contact Messages{% endblock %}
+{% block breadcrumb %}<a href="{% url 'dashboard_home' %}">Dashboard</a> <span>/</span> Messages{% endblock %}
+
+{% block dashboard_content %}
+<div class="table-wrapper">
+    <div class="table-toolbar">
+        <span class="table-toolbar__title">{{ contact_messages.count }} message{{ contact_messages.count|pluralize }}</span>
+    </div>
+    {% if contact_messages %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for msg in contact_messages %}
+            <tr style="{% if not msg.read %}font-weight: 600;{% endif %}">
+                <td>
+                    {% if not msg.read %}<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:8px;"></span>{% endif %}
+                    {{ msg.name }}
+                </td>
+                <td>{{ msg.email }}</td>
+                <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ msg.message|truncatechars:80 }}</td>
+                <td>{{ msg.created_at|date:"M d, Y" }}</td>
+                <td>{% if msg.read %}<span class="badge badge--muted">Read</span>{% else %}<span class="badge badge--success">New</span>{% endif %}</td>
+                <td>
+                    <div class="table-actions">
+                        <a href="{% url 'dashboard_contact_message_detail' msg.pk %}" class="edit"><i class="fa-solid fa-eye"></i></a>
+                        <a href="{% url 'dashboard_contact_message_delete' msg.pk %}" class="delete" onclick="return confirm('Delete this message?')"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty"><i class="fa-solid fa-envelope-open"></i><p>No messages yet.</p></div>
+    {% endif %}
+</div>
+{% endblock %}

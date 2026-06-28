@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %} - Azul Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg: #070d14;
+            --bg-sidebar: #0c1520;
+            --bg-card: #111d2b;
+            --bg-elevated: #162636;
+            --bg-input: #0d1926;
+            --text: #e2e8f0;
+            --text-muted: #7b8da0;
+            --text-dim: #4a5a6e;
+            --accent: #2dd4bf;
+            --accent-dark: #14b8a6;
+            --accent-glow: rgba(45, 212, 191, 0.2);
+            --accent-dim: rgba(45, 212, 191, 0.08);
+            --red: #f87171;
+            --red-dim: rgba(248, 113, 113, 0.12);
+            --gold: #d4a853;
+            --border: rgba(255, 255, 255, 0.06);
+            --radius: 10px;
+            --radius-sm: 7px;
+            --font: 'Inter', sans-serif;
+            --sidebar-w: 260px;
+            --transition: 0.25s ease;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 15px; }
+        body { font-family: var(--font); background: var(--bg); color: var(--text); display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+        a { color: inherit; text-decoration: none; }
+        img { max-width: 100%; }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+            overflow-y: auto;
+        }
+        .sidebar__brand {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar__brand-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 1.1rem; color: #070d14;
+        }
+        .sidebar__brand-text { font-weight: 700; font-size: 1rem; letter-spacing: -0.02em; }
+        .sidebar__brand-sub { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
+        .sidebar__nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+        .sidebar__section { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); padding: 16px 12px 8px; }
+        .sidebar__link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 14px; border-radius: var(--radius-sm);
+            font-size: 0.88rem; font-weight: 500; color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .sidebar__link:hover { background: var(--accent-dim); color: var(--text); }
+        .sidebar__link.active { background: var(--accent-dim); color: var(--accent); font-weight: 600; }
+        .sidebar__link i { width: 20px; text-align: center; font-size: 1rem; }
+        .sidebar__footer { padding: 16px 24px; border-top: 1px solid var(--border); }
+        .sidebar__footer a { font-size: 0.85rem; color: var(--text-muted); transition: color 0.2s; display: flex; align-items: center; gap: 8px; }
+        .sidebar__footer a:hover { color: var(--red); }
+
+        /* Main */
+        .main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; }
+        .main__header {
+            background: rgba(7, 13, 20, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 18px 32px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .main__title { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+        .main__breadcrumb { font-size: 0.8rem; color: var(--text-dim); }
+        .main__breadcrumb a { color: var(--text-muted); transition: color 0.2s; }
+        .main__breadcrumb a:hover { color: var(--accent); }
+        .main__breadcrumb span { margin: 0 6px; }
+        .main__user {
+            display: flex; align-items: center; gap: 12px;
+            font-size: 0.85rem; color: var(--text-muted);
+        }
+        .main__user img, .main__user-avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: var(--accent-dim); display: flex; align-items: center; justify-content: center;
+            color: var(--accent); font-weight: 600; font-size: 0.85rem;
+        }
+        .main__content { padding: 32px; max-width: 1400px; }
+
+        /* Cards / Stats */
+        .stat-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-bottom: 36px; }
+        .stat-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px;
+            transition: var(--transition);
+        }
+        .stat-card:hover { border-color: rgba(45, 212, 191, 0.2); transform: translateY(-2px); }
+        .stat-card__icon { width: 44px; height: 44px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 1.2rem; color: var(--accent); background: var(--accent-dim); }
+        .stat-card__value { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; }
+        .stat-card__label { font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; }
+
+        /* Table */
+        .table-wrapper { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+        .table-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--border); }
+        .table-toolbar__title { font-size: 1.05rem; font-weight: 700; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px 24px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); background: rgba(0,0,0,0.15); border-bottom: 1px solid var(--border); }
+        td { padding: 14px 24px; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.015); }
+        .table-img { width: 48px; height: 36px; border-radius: 4px; object-fit: cover; }
+        .table-actions { display: flex; gap: 8px; }
+        .table-actions a { padding: 6px 10px; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 500; transition: var(--transition); }
+        .table-actions .edit { background: var(--accent-dim); color: var(--accent); }
+        .table-actions .edit:hover { background: var(--accent); color: var(--bg); }
+        .table-actions .delete { background: var(--red-dim); color: var(--red); }
+        .table-actions .delete:hover { background: var(--red); color: #fff; }
+
+        /* Forms */
+        .form-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px; max-width: 800px; }
+        .form-card__header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+        .form-card__title { font-size: 1.25rem; font-weight: 700; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-grid--full { grid-template-columns: 1fr; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group--full { grid-column: 1 / -1; }
+        .form-group label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 11px 14px; background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); color: var(--text); font-family: var(--font); font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim);
+        }
+        .form-group select { cursor: pointer; }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .form-group .help-text { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
+        .form-actions { display: flex; gap: 12px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 11px 22px; font-size: 0.88rem; font-weight: 600;
+            border-radius: var(--radius-sm); border: none; cursor: pointer;
+            transition: var(--transition); font-family: var(--font);
+        }
+        .btn--primary { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: var(--bg); }
+        .btn--primary:hover { box-shadow: 0 6px 20px var(--accent-glow); transform: translateY(-1px); }
+        .btn--secondary { background: var(--bg-elevated); color: var(--text); border: 1px solid var(--border); }
+        .btn--secondary:hover { border-color: rgba(255,255,255,0.2); }
+        .btn--danger { background: var(--red-dim); color: var(--red); }
+        .btn--danger:hover { background: var(--red); color: #fff; }
+        .btn--sm { padding: 7px 14px; font-size: 0.8rem; }
+        .btn--icon { width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; }
+
+        /* Badges */
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 100px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge--success { background: var(--accent-dim); color: var(--accent); }
+        .badge--warning { background: rgba(212, 168, 83, 0.12); color: var(--gold); }
+        .badge--muted { background: rgba(123, 141, 160, 0.12); color: var(--text-muted); }
+        .badge--danger { background: var(--red-dim); color: var(--red); }
+
+        /* Messages */
+        .messages { margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px; }
+        .msg {
+            padding: 14px 20px; border-radius: var(--radius-sm); font-size: 0.88rem; font-weight: 500;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .msg--success { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(45, 212, 191, 0.2); }
+        .msg--error { background: var(--red-dim); color: var(--red); border: 1px solid rgba(248, 113, 113, 0.2); }
+
+        /* Gallery grid in form */
+        .gallery-thumbs { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+        .gallery-thumb { position: relative; width: 100px; height: 75px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); }
+        .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-thumb__delete {
+            position: absolute; top: 4px; right: 4px;
+            width: 22px; height: 22px; border-radius: 50%; background: rgba(0,0,0,0.7); color: var(--red);
+            display: flex; align-items: center; justify-content: center; font-size: 0.65rem; cursor: pointer;
+            transition: var(--transition);
+        }
+        .gallery-thumb__delete:hover { background: var(--red); color: #fff; }
+
+        /* Empty state */
+        .empty { text-align: center; padding: 64px 24px; }
+        .empty i { font-size: 2.5rem; color: var(--text-dim); margin-bottom: 16px; display: block; }
+        .empty p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* Recent list */
+        .recent-list { margin-top: 12px; }
+        .recent-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .recent-item:last-child { border-bottom: none; }
+        .recent-item__img { width: 48px; height: 36px; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
+        .recent-item__info { flex: 1; min-width: 0; }
+        .recent-item__title { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recent-item__meta { font-size: 0.78rem; color: var(--text-dim); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; }
+            .main__content { padding: 20px 16px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .stat-cards { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar__brand">
+            <div class="sidebar__brand-icon">A</div>
+            <div>
+                <div class="sidebar__brand-text">Azul</div>
+                <div class="sidebar__brand-sub">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar__nav">
+            <a href="{% url 'dashboard_home' %}" class="sidebar__link {% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">
+                <i class="fa-solid fa-grid-2"></i> Dashboard
+            </a>
+            <div class="sidebar__section">Content</div>
+            <a href="{% url 'dashboard_projects' %}" class="sidebar__link {% if 'project' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa-solid fa-building"></i> Projects
+            </a>
+            <a href="{% url 'dashboard_services' %}" class="sidebar__link {% if 'service' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa-solid fa-briefcase"></i> Services
+            </a>
+            <a href="{% url 'dashboard_gallery' %}" class="sidebar__link {% if 'gallery' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa-solid fa-images"></i> Gallery
+            </a>
+            <a href="{% url 'dashboard_stats' %}" class="sidebar__link {% if 'stat' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa-solid fa-chart-simple"></i> Stats
+            </a>
+            <a href="{% url 'dashboard_sustainability' %}" class="sidebar__link {% if 'sustainability' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa-solid fa-leaf"></i> Sustainability
+            </a>
+            <a href="{% url 'dashboard_contact_messages' %}" class="sidebar__link {% if 'message' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa-solid fa-envelope"></i> Messages
+                <span id="unread-badge" style="display:none; margin-left:auto; background:var(--accent); color:var(--bg); font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:100px;"></span>
+            </a>
+            <div class="sidebar__section">Settings</div>
+            <a href="{% url 'dashboard_company' %}" class="sidebar__link {% if 'company' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa-solid fa-building-columns"></i> Company Info
+            </a>
+            <a href="{% url 'home' %}" class="sidebar__link" target="_blank">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View Site
+            </a>
+        </nav>
+        <div class="sidebar__footer">
+            <a href="{% url 'dashboard_logout' %}">
+                <i class="fa-solid fa-right-from-bracket"></i> Sign out
+            </a>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="main__header">
+            <div>
+                <h1 class="main__title">{% block header_title %}Dashboard{% endblock %}</h1>
+                <div class="main__breadcrumb">{% block breadcrumb %}{% endblock %}</div>
+            </div>
+            <div class="main__user">
+                <div class="main__user-avatar">{{ request.user.username|first|upper }}</div>
+                {{ request.user.username }}
+            </div>
+        </header>
+
+        <div class="main__content">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="msg msg--{{ message.tags }}"><i class="fa-solid fa-circle-check"></i> {{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block dashboard_content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>

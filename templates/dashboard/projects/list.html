@@ -1,0 +1,60 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Projects{% endblock %}
+{% block header_title %}Projects{% endblock %}
+{% block breadcrumb %}<a href="{% url 'dashboard_home' %}">Dashboard</a> <span>/</span> Projects{% endblock %}
+
+{% block dashboard_content %}
+<div class="table-wrapper">
+    <div class="table-toolbar">
+        <span class="table-toolbar__title">{{ projects.count }} project{{ projects.count|pluralize }}</span>
+        <a href="{% url 'dashboard_project_create' %}" class="btn btn--primary btn--sm">
+            <i class="fa-solid fa-plus"></i> Add Project
+        </a>
+    </div>
+    {% if projects %}
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Client</th>
+                <th>Status</th>
+                <th>Featured</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+            <tr>
+                <td>
+                    {% if project.featured_image %}
+                    <img src="{{ project.featured_image.url }}" alt="" class="table-img">
+                    {% endif %}
+                </td>
+                <td style="font-weight: 600;">{{ project.title }}</td>
+                <td>{{ project.client|default:'-' }}</td>
+                <td>
+                    <span class="badge {% if project.status == 'in_progress' %}badge--success{% elif project.status == 'completed' %}badge--muted{% else %}badge--warning{% endif %}">
+                        {{ project.get_status_display }}
+                    </span>
+                </td>
+                <td>{% if project.featured %}<span class="badge badge--success">Yes</span>{% else %}<span class="badge badge--muted">No</span>{% endif %}</td>
+                <td>
+                    <div class="table-actions">
+                        <a href="{% url 'dashboard_project_edit' project.pk %}" class="edit"><i class="fa-solid fa-pen"></i></a>
+                        <a href="{% url 'dashboard_project_delete' project.pk %}" class="delete" onclick="return confirm('Delete this project?')"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty">
+        <i class="fa-solid fa-folder-open"></i>
+        <p>No projects yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

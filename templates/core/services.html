@@ -1,0 +1,114 @@
+{% extends 'core/base.html' %}
+
+{% block title %}What We Do - Azul Environmental Engineering Services{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero--services">
+    <div class="container">
+        <h1 class="page-hero__title">What We Do</h1>
+        <p class="page-hero__sub">Comprehensive engineering, procurement, and construction solutions across five key sectors</p>
+        <div class="page-hero__nav">
+            {% for service in services %}
+            <a href="#{{ service.slug }}" class="page-hero__nav-link">
+                <i class="{{ service.icon|default:'fa-solid fa-building' }}"></i>
+                {{ service.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% for service in services %}
+<section class="section service-showcase {% cycle 'service-showcase--alt' '' %}" id="{{ service.slug }}" data-animate>
+    <div class="container">
+        <div class="service-showcase__header">
+            <div class="service-showcase__label">
+                <i class="{{ service.icon|default:'fa-solid fa-building' }}"></i>
+                <span>0{{ forloop.counter }}. {{ service.name }}</span>
+            </div>
+            <div class="service-showcase__content">
+                <h2 class="service-showcase__title">
+                    {% if forloop.first %}
+                    Protecting ecosystems through world-class environmental remediation and restoration.
+                    {% elif forloop.counter == 2 %}
+                    Connecting communities with resilient, future-ready transportation infrastructure.
+                    {% elif forloop.counter == 3 %}
+                    Creating iconic, sustainable structures that define city skylines.
+                    {% elif forloop.counter == 4 %}
+                    Delivering aviation infrastructure that moves millions safely and efficiently.
+                    {% elif forloop.counter == 5 %}
+                    Building the water and utility systems that sustain modern life.
+                    {% endif %}
+                </h2>
+                <div class="service-showcase__desc-full">
+                    {{ service.description|linebreaks }}
+                </div>
+            </div>
+        </div>
+
+        {% if service.projects.exists %}
+        <div class="service-showcase__projects">
+            <div class="service-showcase__projects-label">
+                <span>Projects in</span>
+                <strong>{{ service.name }}</strong>
+                <span class="service-showcase__count">({{ service.projects.count }} total)</span>
+            </div>
+            <div class="service-showcase__projects-grid">
+                {% for project in service.projects.all %}
+                <a href="{{ project.get_absolute_url }}" class="showcase-project" data-animate>
+                    <div class="showcase-project__bg">
+                        <div class="showcase-project__icon">
+                            <i class="{{ service.icon|default:'fa-solid fa-hard-hat' }}"></i>
+                        </div>
+                        <span class="showcase-project__number">{{ forloop.counter|stringformat:"02d" }}</span>
+                    </div>
+                    <div class="showcase-project__info">
+                        <span class="project-card__status project-card__status--{{ project.status }}">{{ project.get_status_display }}</span>
+                        <h4>{{ project.title }}</h4>
+                        <div class="showcase-project__meta">
+                            {% if project.client %}<span>{{ project.client }}</span>{% endif %}
+                            {% if project.location %}<span><i class="fa-solid fa-location-dot"></i> {{ project.location }}</span>{% endif %}
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% empty %}
+<section class="section">
+    <div class="container">
+        <p class="empty-state">Service information coming soon.</p>
+    </div>
+</section>
+{% endfor %}
+
+<section class="section contact-banner">
+    <div class="container">
+        <div class="contact-banner__inner" data-animate>
+            <div class="contact-banner__content">
+                <span class="section__overline">Ready to start?</span>
+                <h2>Need a partner for your next <span class="text-accent">project</span>?</h2>
+                <p>Whether you're planning a major infrastructure project, a commercial development, or an environmental restoration initiative, our team has the expertise to deliver exceptional results.</p>
+                <a href="{% url 'contact' %}" class="btn btn--primary">Start a conversation</a>
+            </div>
+            <div class="contact-banner__info">
+                <div class="service-cta-stat">
+                    <span class="service-cta-stat__value">25+</span>
+                    <span class="service-cta-stat__label">Years of Experience</span>
+                </div>
+                <div class="service-cta-stat">
+                    <span class="service-cta-stat__value">340+</span>
+                    <span class="service-cta-stat__label">Projects Delivered</span>
+                </div>
+                <div class="service-cta-stat">
+                    <span class="service-cta-stat__value">4,200+</span>
+                    <span class="service-cta-stat__label">Team Members</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

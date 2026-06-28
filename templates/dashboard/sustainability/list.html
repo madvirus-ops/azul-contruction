@@ -1,0 +1,43 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Sustainability{% endblock %}
+{% block header_title %}Sustainability{% endblock %}
+{% block breadcrumb %}<a href="{% url 'dashboard_home' %}">Dashboard</a> <span>/</span> Sustainability{% endblock %}
+
+{% block dashboard_content %}
+<div class="table-wrapper">
+    <div class="table-toolbar">
+        <span class="table-toolbar__title">{{ entries.count }} entr{{ entries.count|pluralize:"y,ies" }}</span>
+        <a href="{% url 'dashboard_sustainability_create' %}" class="btn btn--primary btn--sm">
+            <i class="fa-solid fa-plus"></i> Add Entry
+        </a>
+    </div>
+    {% if entries %}
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Order</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td style="font-weight: 600;">{{ entry.title }}</td>
+                <td>{{ entry.order }}</td>
+                <td>
+                    <div class="table-actions">
+                        <a href="{% url 'dashboard_sustainability_edit' entry.pk %}" class="edit"><i class="fa-solid fa-pen"></i></a>
+                        <a href="{% url 'dashboard_sustainability_delete' entry.pk %}" class="delete" onclick="return confirm('Delete this entry?')"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty"><i class="fa-solid fa-leaf"></i><p>No sustainability entries yet.</p></div>
+    {% endif %}
+</div>
+{% endblock %}
